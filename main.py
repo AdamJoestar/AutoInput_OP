@@ -210,7 +210,7 @@ class DocumentGeneratorApp(QWidget):
         try:
             document = Document(TEMPLATE_PATH)
         except Exception as e:
-            QMessageBox.critical(self, "Error Membaca Template", f"Gagal memuat template: {e}")
+            QMessageBox.critical(self, "Error al leer la plantilla", f"Error al cargar la plantilla: {e}")
             return
 
         # 4. Lakukan Penggantian di Paragraf dan Tabel
@@ -235,11 +235,11 @@ class DocumentGeneratorApp(QWidget):
             document.save(output_filename)
             QMessageBox.information(
                 self, 
-                "Selesai!", 
-                f"Dokumen Word berhasil dibuat!\n\nFile tersimpan sebagai: **{output_filename}**"
+                "¡Listo!", 
+                f"¡El documento de Word se creó con éxito!\n\nArchivo guardado como: **{output_filename}**"
             )
         except Exception as e:
-            QMessageBox.critical(self, "Error Menyimpan File", f"Gagal menyimpan dokumen: {e}")
+            QMessageBox.critical(self, "Error al guardar el archivo", f"Error al guardar el documento: {e}")
 
 
 if __name__ == '__main__':
