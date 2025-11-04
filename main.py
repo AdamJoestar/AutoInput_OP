@@ -127,6 +127,12 @@ class DocumentGeneratorApp(QWidget):
             if key in ["SAMPLE_DESCRIPTION", "EXTENSION_MODELS", "TESTS_PERFORMED", "CONCLUSIONS"]:
                 # Gunakan QTextEdit untuk input multi-baris
                 input_field = QTextEdit()
+                # Tekan Tab akan berpindah fokus ke field berikutnya (default QTextEdit memasukkan tab ke teks)
+                try:
+                    input_field.setTabChangesFocus(True)
+                except Exception:
+                    # Jika method tidak ada di versi Qt tertentu, pasangkan event filter fallback later if needed
+                    pass
                 input_field.setMinimumHeight(60)
                 grid_layout.addWidget(label, row, 0, 1, 2)
                 grid_layout.addWidget(input_field, row + 1, 0, 1, 2)
