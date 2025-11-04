@@ -2,7 +2,7 @@ import sys
 from PyQt5.QtWidgets import (
     QApplication, QWidget, QVBoxLayout, QHBoxLayout, 
     QLabel, QLineEdit, QPushButton, QMessageBox, 
-    QScrollArea, QGridLayout, QTextEdit, QGroupBox
+    QScrollArea, QGridLayout, QTextEdit, QGroupBox, QFileDialog
 )
 from PyQt5.QtCore import Qt
 from docx import Document
@@ -231,12 +231,24 @@ class DocumentGeneratorApp(QWidget):
             safe_tanggal = tanggal_uji.replace(' ', '_').replace('/', '-').replace('\\', '-')
             
             output_filename = f"Generated_Test_Report_{safe_judul}_{safe_tanggal}.docx"
-            
-            document.save(output_filename)
+
+            # Tanyakan ke user di mana menyimpan dan nama file (Save As)
+            options = QFileDialog.Options()
+            # default name di dialog adalah output_filename
+            file_path, _ = QFileDialog.getSaveFileName(self, "Guardar documento como...", output_filename, "Word Documents (*.docx);;All Files (*)", options=options)
+            if not file_path:
+                # user membatalkan
+                QMessageBox.information(self, "Cancelado", "El almacenamiento fue cancelado por el usuario.")
+                return
+            # Pastikan ekstensi .docx
+            if not file_path.lower().endswith('.docx'):
+                file_path += '.docx'
+
+            document.save(file_path)
             QMessageBox.information(
-                self, 
-                "¡Listo!", 
-                f"¡El documento de Word se creó con éxito!\n\nArchivo guardado como: **{output_filename}**"
+                self,
+                "¡Listo!",
+                f"El documento de Word se creó y se guardó con éxito como:\n{file_path}"
             )
         except Exception as e:
             QMessageBox.critical(self, "Error al guardar el archivo", f"Error al guardar el documento: {e}")
@@ -248,7 +260,7 @@ if __name__ == '__main__':
         os.makedirs(TEMPLATES_DIR)
         # Jangan memanggil QMessageBox sebelum QApplication dibuat (akan memicu error)
         # Tampilkan pesan di console agar script tetap aman dijalankan dari terminal
-        print(f"Folder 'templates' baru saja dibuat. Harap letakkan file '{TEMPLATE_FILENAME}' di dalamnya, lalu jalankan aplikasi kembali.")
+        print(f"La carpeta 'templates' acaba de ser creada. Por favor, coloque el archivo '{TEMPLATE_FILENAME}' Dentro de él, luego vuelve a ejecutar la aplicación.")
         sys.exit() # Keluar agar user dapat menaruh template
 
     app = QApplication(sys.argv)
