@@ -175,9 +175,13 @@ class DocumentGeneratorApp(QWidget):
     def replace_in_paragraph(self, paragraph, placeholder, value):
         """Mengganti placeholder di dalam paragraf, menjaga format teks."""
         if placeholder in paragraph.text:
-            # Menggunakan runs untuk menjaga format, tapi lebih kompleks. 
+            # Menggunakan runs untuk menjaga format, tapi lebih kompleks.
             # Untuk template sederhana, kita bisa langsung ganti text dan biarkan python-docx mengatur format.
             paragraph.text = paragraph.text.replace(placeholder, value)
+            # Atur font untuk semua runs di paragraf
+            for run in paragraph.runs:
+                run.font.name = "Gordita Light"
+                run.font.size = 9 * 12700  # Font size in twips (1/1440 inch), 9pt = 9*12700
 
     def replace_in_tables(self, document, replacement_data):
         """Mengganti placeholder di dalam sel tabel."""
