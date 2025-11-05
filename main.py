@@ -19,6 +19,10 @@ TEMPLATE_PATH = os.path.join(TEMPLATES_DIR, TEMPLATE_FILENAME)
 # --- Definisi Placeholders & Input Fields ---
 # Mapping dari Key (untuk kode) ke Placeholder (untuk Word) dan Label (untuk UI)
 FIELD_DEFINITIONS = {
+    # Encabezado / Header fields
+    "TEST_PLAN_NUMBER": {"placeholder": "[NO_TEST]", "label": "Nº de Test Plan"},
+    "REVISION": {"placeholder": "[REV]", "label": "Revisión"},
+    "ISSUE_DATE": {"placeholder": "[DATE]", "label": "Fecha de emisión (DD/MM/YYYY)"},
     "SAMPLE_DESCRIPTION": {"placeholder": "[TEXT1]", "label": "DESCRIPCIÓN DE LAS MUESTRAS"},
     "DATE_OF_RECEPTION": {"placeholder": "[TEXT2]", "label": "Fecha de Recepción (DD/MM/YYYY)"},
     "COMMERCIAL_BRAND": {"placeholder": "[TEXT4]", "label": "Marca comercial"},
@@ -68,6 +72,11 @@ class DocumentGeneratorApp(QWidget):
 
         # --- Membuat Group Box untuk Input agar terstruktur ---
         
+        # Group 0: Header information (Test Plan number, Revision, Issue Date)
+        self.create_input_group(form_layout, "Encabezado - Información del documento", [
+            "TEST_PLAN_NUMBER", "REVISION", "ISSUE_DATE"
+        ])
+
         # Group 1: Product and Sample Information (1-6)
         self.create_input_group(form_layout, "Información del producto y muestras (Campos 1-6)", [
             "SAMPLE_DESCRIPTION", "DATE_OF_RECEPTION", 
@@ -144,7 +153,12 @@ class DocumentGeneratorApp(QWidget):
                 input_field.setMinimumHeight(30)
 
                 # Set tanggal hari ini sebagai default untuk field tanggal
-            
+                if key in ["DATE_OF_RECEPTION", "DATE_OF_TEST", "ISSUE_DATE"]:
+                    try:
+                        input_field.setText(date.today().strftime("%d/%m/%Y"))
+                    except Exception:
+                        pass
+
                 # Tata letak 2 kolom
                 grid_layout.addWidget(label, row, col)
                 grid_layout.addWidget(input_field, row + 1, col)
@@ -176,6 +190,38 @@ class DocumentGeneratorApp(QWidget):
                             self.replace_in_paragraph(paragraph, placeholder, value)
                     # Ganti di paragraf yang mungkin ada di dalam shape atau kotak teks (lebih jarang)
                     # Jika ada masalah, fokus pada paragraf standar sudah cukup untuk sebagian besar template.
+
+    def replace_in_headers(self, document, replacement_data):
+        """Mengganti placeholder di dalam header setiap section."""
+        for section in document.sections:
+            header = section.header
+            # Ganti di paragraf header
+            for paragraph in header.paragraphs:
+                for placeholder, value in replacement_data.items():
+                    self.replace_in_paragraph(paragraph, placeholder, value)
+            # Ganti di tabel di header jika ada
+            for table in header.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            for placeholder, value in replacement_data.items():
+                                self.replace_in_paragraph(paragraph, placeholder, value)
+
+    def replace_in_footers(self, document, replacement_data):
+        """Mengganti placeholder di dalam footer setiap section."""
+        for section in document.sections:
+            footer = section.footer
+            # Ganti di paragraf footer
+            for paragraph in footer.paragraphs:
+                for placeholder, value in replacement_data.items():
+                    self.replace_in_paragraph(paragraph, placeholder, value)
+            # Ganti di tabel di footer jika ada
+            for table in footer.tables:
+                for row in table.rows:
+                    for cell in row.cells:
+                        for paragraph in cell.paragraphs:
+                            for placeholder, value in replacement_data.items():
+                                self.replace_in_paragraph(paragraph, placeholder, value)
 
     def generate_document(self):
         """Logika utama untuk membaca input, memuat template, mengganti placeholder, dan menyimpan file."""
@@ -219,12 +265,14 @@ class DocumentGeneratorApp(QWidget):
             QMessageBox.critical(self, "Error al leer la plantilla", f"Error al cargar la plantilla: {e}")
             return
 
-        # 4. Lakukan Penggantian di Paragraf dan Tabel
+        # 4. Lakukan Penggantian di Paragraf, Tabel, dan Header
         for paragraph in document.paragraphs:
             for placeholder, value in replacement_data.items():
                 self.replace_in_paragraph(paragraph, placeholder, value)
-        
+
         self.replace_in_tables(document, replacement_data)
+        self.replace_in_headers(document, replacement_data)
+        self.replace_in_footers(document, replacement_data)
 
         # 5. Simpan Dokumen Akhir
         try:
