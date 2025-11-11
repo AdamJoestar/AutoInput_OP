@@ -16,7 +16,56 @@ class DocumentGeneratorApp(QWidget):
         self.input_widgets = {}
         self.document_handler = DocumentHandler()
         self.setWindowTitle("Generador de Informes de Pruebas Térmicas")
-        self.setStyleSheet("font-size: 14px; font-family: Arial;")
+        self.setStyleSheet("""
+            QWidget {
+                background-color: #f5f5f5;
+                font-size: 14px;
+                font-family: 'Segoe UI', Arial, sans-serif;
+                color: #333;
+            }
+            QLabel {
+                color: #555;
+            }
+            QGroupBox {
+                font-weight: bold;
+                border: 2px solid #ddd;
+                border-radius: 8px;
+                margin-top: 1ex;
+                background-color: #ffffff;
+            }
+            QGroupBox::title {
+                subcontrol-origin: margin;
+                left: 10px;
+                padding: 0 10px 0 10px;
+                color: #2c3e50;
+            }
+            QLineEdit, QTextEdit, QDateEdit {
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                padding: 8px;
+                background-color: #fff;
+            }
+            QLineEdit:focus, QTextEdit:focus, QDateEdit:focus {
+                border-color: #3498db;
+            }
+            QPushButton {
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #3498db, stop:1 #2980b9);
+                color: white;
+                border: none;
+                border-radius: 6px;
+                padding: 12px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1, stop:0 #5dade2, stop:1 #3498db);
+            }
+            QPushButton:pressed {
+                background-color: #21618c;
+            }
+            QScrollArea {
+                border: none;
+            }
+        """)
         self.init_ui()
 
     def init_ui(self):
@@ -67,9 +116,6 @@ class DocumentGeneratorApp(QWidget):
 
         # --- Tombol Generate ---
         self.generate_button = QPushButton("GENERAR DOCUMENTO DE WORD (.docx)")
-        self.generate_button.setStyleSheet(
-            "background-color: #3498DB; color: white; padding: 12px; border-radius: 8px; font-weight: bold;"
-        )
         self.generate_button.clicked.connect(self.generate_document)
         main_layout.addWidget(self.generate_button)
 
@@ -88,7 +134,6 @@ class DocumentGeneratorApp(QWidget):
     def create_input_group(self, parent_layout, title, keys):
         """Membuat group box untuk input yang terorganisir."""
         group_box = QGroupBox(title)
-        group_box.setStyleSheet("font-weight: bold; margin-top: 10px;")
         grid_layout = QGridLayout()
         grid_layout.setSpacing(10)
 

@@ -1,8 +1,7 @@
-# Refactoring TODO List
+# TODO: Modernize UI
 
-- [x] Create config.py for configurations (TEMPLATES_DIR, TEMPLATE_FILENAME, etc.)
-- [x] Create fields.py for FIELD_DEFINITIONS
-- [x] Create ui.py for UI-related classes and methods (DocumentGeneratorApp class)
-- [x] Create document_handler.py for document generation logic (replace functions, generate_document method)
-- [x] Edit main.py to import modules and simplify to entry point
-- [x] Test the refactored application to ensure functionality works
+- [x] Update main window stylesheet for modern background and fonts
+- [x] Style group boxes with better borders, backgrounds, and spacing
+- [x] Improve input fields (QLineEdit, QTextEdit, QDateEdit) with padding, focus effects, and rounded corners
+- [x] Style the generate button with gradients, hover effects, and modern appearance
+- [x] Test the updated UI for visual appeal and functionality
